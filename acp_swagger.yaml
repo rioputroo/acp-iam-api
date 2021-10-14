@@ -1,0 +1,521 @@
+---
+openapi: 3.0.0
+info:
+  title: ACP REST API (GoLang)
+  description: |
+    This is a sample REST API for ACP Final Project.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://virtserver.swaggerhub.com/rioputroo/ACP_API/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://petstore.swagger.io/v2
+tags:
+- name: catalog
+  description: List about catalog product API
+- name: iam
+  description: List about IAM API (user management)
+- name: order
+  description: List about Order API (cart, checkout)
+paths:
+  /catalog/product/:
+    get:
+      tags:
+      - catalog
+      summary: Get list of products
+      description: Return list of products
+      operationId: getProducts
+      responses:
+        "200":
+          description: successfully fetch list of products
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+      - catalog
+      summary: Add new product
+      operationId: addProduct
+      requestBody:
+        $ref: '#/components/requestBodies/Product'
+      responses:
+        "201":
+          description: Product Created
+        "400":
+          description: Bad Request
+        "405":
+          description: Invalid Input
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /catalog/product/{productId}:
+    get:
+      tags:
+      - catalog
+      summary: Get single product
+      description: Returns a single product
+      operationId: getProduct
+      parameters:
+      - name: productId
+        in: path
+        description: Product id to fetch
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successfully fetch product
+        "500":
+          description: Internal Server Error
+    put:
+      tags:
+      - catalog
+      summary: Update a product
+      operationId: updateProduct
+      parameters:
+      - name: productId
+        in: path
+        description: Product id to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/Product'
+      responses:
+        "200":
+          description: Successfully update product
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+    delete:
+      tags:
+      - catalog
+      summary: Delete a product
+      operationId: deleteProduct
+      parameters:
+      - name: productId
+        in: path
+        description: Product id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: Successfully delete product
+        "404":
+          description: Product not found
+        "400":
+          description: Invalid id
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /catalog/category/:
+    get:
+      tags:
+      - catalog
+      summary: Get list of category
+      description: Return list of category
+      operationId: getCategories
+      responses:
+        "200":
+          description: successfully fetch list of categories
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+      - catalog
+      summary: Add new category
+      operationId: addCategory
+      requestBody:
+        $ref: '#/components/requestBodies/Category'
+      responses:
+        "201":
+          description: Category Created
+        "400":
+          description: Bad Request
+        "405":
+          description: Invalid Input
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /catalog/category/{categoryId}:
+    get:
+      tags:
+      - catalog
+      summary: Get single category
+      description: Returns a single category
+      operationId: getCategory
+      parameters:
+      - name: categoryId
+        in: path
+        description: Category id to fetch
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successfully fetch product
+        "500":
+          description: Internal Server Error
+    put:
+      tags:
+      - catalog
+      summary: Update a category
+      operationId: updateCategory
+      parameters:
+      - name: categoryId
+        in: path
+        description: Category id to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/Category'
+      responses:
+        "200":
+          description: Successfully update category
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+    delete:
+      tags:
+      - catalog
+      summary: Delete a category
+      operationId: deleteCategory
+      parameters:
+      - name: categoryId
+        in: path
+        description: Category id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: Successfully delete category
+        "404":
+          description: Product not found
+        "400":
+          description: Invalid id
+        "500":
+          description: Internal Server Error
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /order/cart/:
+    get:
+      tags:
+      - order
+      summary: Get cart
+      description: Return cart
+      operationId: getCart
+      responses:
+        "200":
+          description: successfully fetch cart
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+      - order
+      summary: Add item to cart
+      description: Added item to cart
+      operationId: addToCart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_cart_body'
+      responses:
+        "201":
+          description: Successfully added
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+  /order/checkout/:
+    post:
+      tags:
+      - order
+      summary: Send checkout
+      description: User process to checkout
+      operationId: checkout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_checkout_body'
+      responses:
+        "201":
+          description: successfully create order
+        "500":
+          description: Internal Server Error
+  /iam/auth/register/:
+    post:
+      tags:
+      - iam
+      summary: Register user
+      description: Registering new user
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+        required: true
+      responses:
+        "201":
+          description: successful operation
+  /iam/auth/login/:
+    post:
+      tags:
+      - iam
+      summary: Logs user into the system
+      operationId: loginUser
+      parameters:
+      - name: username
+        in: query
+        description: The user name for login
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: The password for login
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                type: string
+        "400":
+          description: Invalid username/password supplied
+        "404":
+          description: User not found
+  /iam/auth/logout/:
+    get:
+      tags:
+      - iam
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        petId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+          - placed
+          - approved
+          - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+    Category:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        href:
+          type: string
+      xml:
+        name: Category
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+      xml:
+        name: User
+    Credentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Cart:
+      type: object
+      properties:
+        id:
+          type: number
+        href:
+          type: string
+        cartItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItems'
+    CartItems:
+      type: object
+      properties:
+        href:
+          type: string
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+          format: int64
+        lineTotals:
+          type: number
+    Product:
+      required:
+      - category
+      - description
+      - image
+      - name
+      - price
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        href:
+          type: string
+        name:
+          type: string
+          example: laptop
+        category:
+          $ref: '#/components/schemas/Category'
+        price:
+          type: number
+          example: 100000
+        description:
+          type: string
+          example: contoh deskripsi laptop
+        image:
+          type: string
+          example: https://imgur.com/123
+    order_cart_body:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+          format: int64
+    order_checkout_body:
+      type: object
+      properties:
+        cart:
+          $ref: '#/components/schemas/Cart'
+        user:
+          $ref: '#/components/schemas/User'
+  requestBodies:
+    Product:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+    Category:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://petstore.swagger.io/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
