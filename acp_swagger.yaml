@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.0
 info:
-  title: ACP REST API    (GoLang)
+  title: ACP REST APIS    (GoLang)
   description: |
     This is a sample REST API for ACP Final Project.
   license:
