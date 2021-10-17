@@ -31,7 +31,16 @@
       "dnsServers": null,
       "mountPoints": [],
       "workingDirectory": null,
-      "secrets": null,
+      "secrets": [
+                     {
+                    "name": "DB_USER",
+                    "valueFrom": "acp-db-username"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "acp-db-password"
+                }
+            ],
       "dockerSecurityOptions": null,
       "memory": null,
       "memoryReservation": 512,
