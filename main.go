@@ -55,7 +55,23 @@ func main() {
 }
 
 func initDB() *gorm.DB {
-	dsn := "host=172.31.3.115 user=postgres password=Qhanau8oJsP7 dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	configDB := map[string]string{
+		"DB_Username": os.Getenv("DB_USER"),
+		"DB_Password": os.Getenv("DB_PASSWORD"),
+	}
+
+// 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+// 		configDB["DB_Username"],
+// 		configDB["DB_Password"],
+// 		configDB["DB_Host"],
+// 		configDB["DB_Port"],
+// 		configDB["DB_Name"])
+	
+	dsn := fmt.Sprintf("host=172.31.3.115 user=%s password=%s dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai",
+		configDB["DB_Username"],
+		configDB["DB_Password"])
+	
+// 	dsn := "host=172.31.3.115 user=postgres password=Qhanau8oJsP7 dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
