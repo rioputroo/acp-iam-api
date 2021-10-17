@@ -19,7 +19,7 @@ tags:
 - name: catalog
   description: List about catalog product API
 - name: iam
-  description: List about IAM API (user management)
+  description: List about IAM API (auth management)
 - name: order
   description: List about Order API (cart, checkout)
 paths:
@@ -296,11 +296,11 @@ paths:
     post:
       tags:
       - iam
-      summary: Register user
-      description: Registering new user
+      summary: Register auth
+      description: Registering new auth
       operationId: createUser
       requestBody:
-        description: Created user object
+        description: Created auth object
         content:
           application/json:
             schema:
@@ -313,12 +313,12 @@ paths:
     post:
       tags:
       - iam
-      summary: Logs user into the system
+      summary: Logs auth into the system
       operationId: loginUser
       parameters:
       - name: username
         in: query
-        description: The user name for login
+        description: The auth name for login
         required: true
         style: form
         explode: true
@@ -350,7 +350,7 @@ paths:
     get:
       tags:
       - iam
-      summary: Logs out current logged in user session
+      summary: Logs out current logged in auth session
       operationId: logoutUser
       responses:
         default:
