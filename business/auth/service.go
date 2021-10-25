@@ -1,52 +1,38 @@
 package auth
 
 import (
-	"acp-iam-api/business/user"
+	"acp-iam-api/business/users"
 	"github.com/golang-jwt/jwt"
+	"os"
 	"time"
 )
 
+//=============== The implementation of those interface put below =======================
 type service struct {
-	userService user.Service
+	userService users.Service
 }
 
-func NewService(userService user.Service) Service {
-	return &service{userService: userService}
+//NewService Construct user service object
+func NewService(userService users.Service) Service {
+	return &service{
+		userService,
+	}
 }
 
-//Register add new user to the system
-func (s service) Register(email string, password string) (string, error) {
-	_, err := s.userService.Register(email, password)
-
+//Login by given user Username and Password, return error if not exist
+func (s *service) Login(email string, password string) (string, error) {
+	user, err := s.userService.Login(email, password)
 	if err != nil {
-		return "", err
+		return "", nil
 	}
 
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
-	claims["id"] = 1
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
-	claims["name"] = "Rio Trilaksono Putro"
-	claims["email"] = "riotrilaksonop@gmail.com"
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	return token.SignedString([]byte("secret"))
-}
-
-func (s service) Login(email string, password string) (string, error) {
-	user, err := s.userService.FindUserByEmailAndPassword(email, password)
-	if err != nil {
-		return "", err
-	}
-
-	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["id"] = user.Id
+	claims["id"] = user.ID
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
 	claims["name"] = user.Name
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString([]byte("secret"))
+	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
