@@ -30,7 +30,7 @@ jobs:
       run: docker build -t rioputroo/acp:latest .
       
     - name: Login DockerHub
-      uses: docker/login-actions@v1
+      uses: docker/login-action@v1
       with: 
         username: ${{secrets.DOCKER_USERNAME}}
         password: ${{secrets.DOCKER_PASSWORD}}
