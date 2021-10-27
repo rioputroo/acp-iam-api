@@ -1,0 +1,21 @@
+name : CI/CD Process
+
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+  unit-test:
+    name: Unit Testing
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - name: Running Unit Test
+      run: go test ./... -cover
