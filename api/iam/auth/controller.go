@@ -27,12 +27,13 @@ func (controller *Controller) Login(c echo.Context) error {
 		return c.JSON(common.NewBadRequestResponse())
 	}
 
-	token, err := controller.service.Login(loginRequest.Email, loginRequest.Password)
+	user, token, err := controller.service.Login(loginRequest.Email, loginRequest.Password)
+
 	if err != nil {
 		return c.JSON(common.NewErrorBusinessResponse(err))
 	}
 
-	response := response.NewLoginResponse(token)
+	response := response.NewLoginResponse(*user, token)
 
 	return c.JSON(common.NewSuccessResponse(response))
 }

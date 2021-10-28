@@ -1,5 +1,7 @@
 package response
 
+import "acp-iam-api/business/users"
+
 //Login response payload
 type LoginResponse struct {
 	Email string `json:"email"`
@@ -7,9 +9,10 @@ type LoginResponse struct {
 }
 
 //NewLoginResponse construct LoginResponse
-func NewLoginResponse(token string) *LoginResponse {
+func NewLoginResponse(users users.Users, token string) *LoginResponse {
 	var LoginResponse LoginResponse
 
+	LoginResponse.Email = users.Email
 	LoginResponse.Token = token
 
 	return &LoginResponse

@@ -72,7 +72,11 @@ func (s service) DeleteUsers(id uint) error {
 func (s service) Login(email string, password string) (*Users, error) {
 	password = GetMD5Hash(password)
 
-	login, _ := s.repository.Login(email, password)
+	login, err := s.repository.Login(email, password)
+
+	if err != nil {
+		return nil, nil
+	}
 
 	return login, nil
 }

@@ -1,10 +1,9 @@
 package auth
 
 import (
+	"acp-iam-api/business"
 	"acp-iam-api/business/users"
-	"github.com/golang-jwt/jwt"
-	"os"
-	"time"
+	"acp-iam-api/middleware"
 )
 
 //=============== The implementation of those interface put below =======================
@@ -20,21 +19,22 @@ func NewService(userService users.Service) Service {
 }
 
 //Login by given user Username and Password, return error if not exist
-func (s *service) Login(email string, password string) (string, error) {
+func (s *service) Login(email string, password string) (*users.Users, string, error) {
 	user, err := s.userService.Login(email, password)
+
 	if err != nil {
-		return "", nil
+		return nil, "", nil
+	} else if user == nil {
+		return nil, "", business.ErrNotFound
 	}
 
-	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
-	claims["name"] = user.Name
+	token, err := middleware.CreateToken(user.Email, user.ID, user.RolesId)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	if err != nil {
+		return nil, "", nil
+	}
 
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	return user, token, nil
 }
 
 func (s *service) Register(email string, password string) (users.UsersCreds, error) {
