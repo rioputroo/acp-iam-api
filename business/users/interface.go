@@ -13,6 +13,7 @@ type Service interface {
 	DeleteUsers(id uint) error
 	Login(email string, password string) (*Users, error)
 	Register(email string, password string) (*UsersCreds, error)
+	FindUserByEmail(email string) bool
 }
 
 type Repository interface {
@@ -23,4 +24,5 @@ type Repository interface {
 	DeleteUsers(id uint) error
 	Login(email string, password string) (*Users, error)
 	Register(email string, password string) (*UsersCreds, error)
+	FindUserByEmail(email string) bool
 }

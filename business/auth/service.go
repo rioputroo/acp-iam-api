@@ -46,3 +46,7 @@ func (s *service) Register(email string, password string) (users.UsersCreds, err
 
 	return *userRegister, nil
 }
+
+func (s *service) FindUserByEmail(email string) bool {
+	return s.userService.FindUserByEmail(email)
+}

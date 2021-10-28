@@ -82,3 +82,7 @@ func (s service) Register(email string, password string) (*UsersCreds, error) {
 
 	return s.repository.Register(email, password)
 }
+
+func (s service) FindUserByEmail(email string) bool {
+	return s.repository.FindUserByEmail(email)
+}

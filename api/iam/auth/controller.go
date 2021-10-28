@@ -44,9 +44,15 @@ func (controller *Controller) Register(c echo.Context) error {
 		return c.JSON(common.NewBadRequestResponse())
 	}
 
-	registerResponse, err := controller.service.Register(registerRequest.Email, registerRequest.Password)
-	if err != nil {
-		return c.JSON(common.NewErrorBusinessResponse(err))
+	err := controller.service.FindUserByEmail(registerRequest.Email)
+
+	if err != true {
+		return c.JSON(common.NewConflictResponse())
+	}
+
+	registerResponse, err2 := controller.service.Register(registerRequest.Email, registerRequest.Password)
+	if err2 != nil {
+		return c.JSON(common.NewErrorBusinessResponse(err2))
 	}
 
 	response := response.NewRegisterResponse(registerResponse.Name, registerResponse.Email)

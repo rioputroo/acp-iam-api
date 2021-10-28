@@ -183,3 +183,15 @@ func (repo *GormRepository) Register(email string, password string) (*users.User
 
 	return &result, nil
 }
+
+func (repo *GormRepository) FindUserByEmail(email string) bool {
+	var userTable UserTable
+
+	err := repo.DB.Where("email = ?", email).First(&userTable).Error
+
+	if err != nil {
+		return true
+	}
+
+	return false
+}

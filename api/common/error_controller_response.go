@@ -7,6 +7,7 @@ type errorControllerResponseCode string
 const (
 	ErrBadRequest errorControllerResponseCode = "bad_request"
 	ErrForbidden  errorControllerResponseCode = "forbidden"
+	ErrConflict   errorControllerResponseCode = "conflict"
 )
 
 //ControllerResponse default payload response
@@ -30,6 +31,15 @@ func NewForbiddenResponse() (int, ControllerResponse) {
 	return http.StatusForbidden, ControllerResponse{
 		ErrForbidden,
 		"Forbidden",
+		map[string]interface{}{},
+	}
+}
+
+//NewConflictResponse default for Conflict error response
+func NewConflictResponse() (int, ControllerResponse) {
+	return http.StatusConflict, ControllerResponse{
+		ErrConflict,
+		"conflict, data may be already exists",
 		map[string]interface{}{},
 	}
 }
