@@ -20,6 +20,7 @@ func NewGetAllUsersResponse(users []users.Users) GetAllUsersResponse {
 		getUsersResponse.Name = value.Name
 		getUsersResponse.Email = value.Email
 		getUsersResponse.IsActive = value.IsActive
+		getUsersResponse.RolesId = value.RolesId
 
 		getAllUsersResponse.Users = append(getAllUsersResponse.Users, getUsersResponse)
 	}
