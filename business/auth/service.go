@@ -36,3 +36,13 @@ func (s *service) Login(email string, password string) (string, error) {
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
+
+func (s *service) Register(email string, password string) (users.UsersCreds, error) {
+	userRegister, err := s.userService.Register(email, password)
+
+	if err != nil {
+		return users.UsersCreds{}, err
+	}
+
+	return *userRegister, nil
+}

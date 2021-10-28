@@ -50,6 +50,15 @@ func (col *UserTable) ToUser() users.Users {
 	return users
 }
 
+func (col *UserTable) ToUserCreds() users.UsersCreds {
+	var users users.UsersCreds
+
+	users.Name = col.Name
+	users.Email = col.Email
+
+	return users
+}
+
 func (repo *GormRepository) GetAllUsers() ([]users.Users, error) {
 	var userTable []UserTable
 
@@ -141,4 +150,36 @@ func (repo *GormRepository) Login(email string, password string) (*users.Users, 
 	user := userData.ToUser()
 
 	return &user, nil
+}
+
+func (repo *GormRepository) Register(email string, password string) (*users.UsersCreds, error) {
+	var userTable UserTable
+	var rolesTable roles.RolesTable
+
+	var rolesID uint
+
+	errDefRoles := repo.DB.Where("name = ?", "user").First(&rolesTable).Error
+
+	if errDefRoles != nil {
+		return nil, errDefRoles
+	}
+
+	rolesData := rolesTable.ToRoles()
+	rolesID = rolesData.ID
+
+	err := repo.DB.Create(&UserTable{
+		Email:    email,
+		Password: password,
+		RolesID:  rolesID,
+		Name:     "Anonymous",
+		IsActive: true,
+	}).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := userTable.ToUserCreds()
+
+	return &result, nil
 }

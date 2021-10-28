@@ -12,6 +12,7 @@ type Service interface {
 	UpdateUsers(id uint, usersRequest *request.UpdateUsersRequest) error
 	DeleteUsers(id uint) error
 	Login(email string, password string) (*Users, error)
+	Register(email string, password string) (*UsersCreds, error)
 }
 
 type Repository interface {
@@ -21,4 +22,5 @@ type Repository interface {
 	UpdateUsers(id uint, users Users) error
 	DeleteUsers(id uint) error
 	Login(email string, password string) (*Users, error)
+	Register(email string, password string) (*UsersCreds, error)
 }

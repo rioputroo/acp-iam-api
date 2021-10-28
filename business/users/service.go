@@ -76,3 +76,9 @@ func (s service) Login(email string, password string) (*Users, error) {
 
 	return login, nil
 }
+
+func (s service) Register(email string, password string) (*UsersCreds, error) {
+	password = GetMD5Hash(password)
+
+	return s.repository.Register(email, password)
+}

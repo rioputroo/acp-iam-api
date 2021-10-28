@@ -15,6 +15,11 @@ type Users struct {
 	Roles    string
 }
 
+type UsersCreds struct {
+	Email string
+	Name  string
+}
+
 //NewUsers create new users
 func NewUsers(request request.InsertUsersRequest) Users {
 	return Users{

@@ -36,3 +36,20 @@ func (controller *Controller) Login(c echo.Context) error {
 
 	return c.JSON(common.NewSuccessResponse(response))
 }
+
+func (controller *Controller) Register(c echo.Context) error {
+	registerRequest := new(request.RegisterRequest)
+
+	if err := c.Bind(registerRequest); err != nil {
+		return c.JSON(common.NewBadRequestResponse())
+	}
+
+	registerResponse, err := controller.service.Register(registerRequest.Email, registerRequest.Password)
+	if err != nil {
+		return c.JSON(common.NewErrorBusinessResponse(err))
+	}
+
+	response := response.NewRegisterResponse(registerResponse.Name, registerResponse.Email)
+
+	return c.JSON(common.NewSuccessResponse(response))
+}

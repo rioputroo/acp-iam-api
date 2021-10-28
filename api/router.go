@@ -39,5 +39,7 @@ func RegisterPath(e *echo.Echo, rolesController *roles.Controller, usersControll
 	iamAuthRoutes := e.Group("api/iam/auth")
 	//route to login user
 	iamAuthRoutes.POST("/login", authController.Login)
+	//route to register user
+	iamAuthRoutes.POST("/register", authController.Register)
 
 }
