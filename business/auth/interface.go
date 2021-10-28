@@ -1,10 +1,7 @@
 package auth
 
-//Service outgoing port for auth auth
+//Service outgoing port for user
 type Service interface {
-	//Login auth into the system, return jwt token
+	//Login If data not found will return nil without error
 	Login(email string, password string) (string, error)
-
-	//Register add new user into the sytem
-	Register(email string, password string) (string, error)
 }

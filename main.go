@@ -2,86 +2,101 @@ package main
 
 import (
 	"acp-iam-api/api"
-	_ "acp-iam-api/api/v1/auth"
-	authController "acp-iam-api/api/v1/auth"
+	authController "acp-iam-api/api/iam/auth"
+	rolesController "acp-iam-api/api/iam/roles"
+	usersController "acp-iam-api/api/iam/users"
 	authService "acp-iam-api/business/auth"
-	userService "acp-iam-api/business/user"
-	userRepository "acp-iam-api/modules/user"
+	rolesService "acp-iam-api/business/roles"
+	"acp-iam-api/business/users"
+	"acp-iam-api/config"
+	rolesRepository "acp-iam-api/repository/roles"
+	usersRepository "acp-iam-api/repository/users"
 	"fmt"
-	"os"
 	"github.com/labstack/echo/v4"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"os"
 )
 
-type User struct {
-	gorm.Model
-	Name     string `json:"name" form:"name"`
-	Email    string `json:"email" form:"email"`
-	Password string `json:"password" form:"password"`
+func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
+
+	configDB := map[string]string{
+		"DB_Username": os.Getenv("ACP_IAM_API_DB_USERNAME"),
+		"DB_Password": os.Getenv("ACP_IAM_API_DB_PASSWORD"),
+		"DB_Port":     os.Getenv("ACP_IAM_API_DB_PORT"),
+		"DB_Host":     os.Getenv("ACP_IAM_API_DB_ADDRESS"),
+		"DB_Name":     os.Getenv("ACP_IAM_API_DB_NAME"),
+	}
+
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		configDB["DB_Username"],
+		configDB["DB_Password"],
+		configDB["DB_Host"],
+		configDB["DB_Port"],
+		configDB["DB_Name"])
+
+	db, e := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+	if e != nil {
+		panic(e)
+	}
+
+	db.AutoMigrate(&rolesRepository.RolesTable{}, &usersRepository.UserTable{})
+
+	return db
 }
 
-var (
-	user = []User{
-		{Name: "Rio", Email: "rio@gmail.com", Password: "test"},
-		{Name: "Evan", Email: "evan@gmail.com", Password: "test"},
-	}
-	DB *gorm.DB
-)
-
 func main() {
-	//initial DB connection
-	dbConnection := initDB()
+	//load config if available or set to default
+	config := config.GetConfig()
 
-	//initial user repository
-	userRepo := userRepository.NewGormDBRepository(dbConnection)
+	////initial DB connection
+	//dbConnection := initDB()
 
-	//initiate user service
-	userService := userService.NewService(userRepo)
+	//initialize database connection based on given config
+	dbConnection := newDatabaseConnection(config)
+
+	//initial roles repository
+	rolesRepo := rolesRepository.NewGormDBRepository(dbConnection)
+
+	//initiate roles service
+	rolesService := rolesService.NewService(rolesRepo)
+
+	//initiate roles controller
+	rolesController := rolesController.NewController(rolesService)
+
+	//initial users repository
+	usersRepo := usersRepository.NewGormDBRepository(dbConnection)
+
+	//initiate users service
+	usersService := users.NewService(usersRepo)
+
+	//initiate users controller
+	usersController := usersController.NewController(usersService)
 
 	//initiate auth service
-	authService := authService.NewService(userService)
+	authService := authService.NewService(usersService)
 
-	//initiate user controller
+	//initiate users controller
 	authController := authController.NewController(authService)
 
-	//create echo http
 	e := echo.New()
 
-	//register API path and handler
-	api.RegisterPath(e, authController)
+	api.RegisterPath(e, rolesController, usersController, authController)
 
 	e.Start(":8000")
-
 }
 
 func initDB() *gorm.DB {
-	configDB := map[string]string{
-		"DB_Username": os.Getenv("DB_USER"),
-		"DB_Password": os.Getenv("DB_PASSWORD"),
-	}
 
-// 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-// 		configDB["DB_Username"],
-// 		configDB["DB_Password"],
-// 		configDB["DB_Host"],
-// 		configDB["DB_Port"],
-// 		configDB["DB_Name"])
-	
-	dsn := fmt.Sprintf("host=172.31.3.115 user=%s password=%s dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai",
-		configDB["DB_Username"],
-		configDB["DB_Password"])
-	
-// 	dsn := "host=172.31.3.115 user=postgres password=Qhanau8oJsP7 dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// 	dsn := "host=172.31.3.115 user=postgres password=Qhanau8oJsP7 dbname=acp_final_project port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "root:rioputro93@tcp(database-acp-final-project.cph9s9nf5t0g.ap-southeast-1.rds.amazonaws.com)/acpfinalproject?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		panic(err)
-	} else {
-		fmt.Println("db connected")
 	}
 
-	db.AutoMigrate(&userRepository.UserTable{})
+	db.AutoMigrate(&rolesRepository.RolesTable{}, &usersRepository.UserTable{})
 
 	return db
 }
