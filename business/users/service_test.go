@@ -60,7 +60,7 @@ func setup() {
 	usersService = users.NewService(&usersRepository)
 }
 
-func TestService_GetAllUsers(t *testing.T) {
+func TestServiceGetAllUsers(t *testing.T) {
 	t.Run("Expect found all list users", func(t *testing.T) {
 		usersRepository.On("GetAllUsers", mock.Anything).Return(usersArray, nil).Once()
 
@@ -74,7 +74,7 @@ func TestService_GetAllUsers(t *testing.T) {
 	})
 }
 
-func TestService_GetUsers(t *testing.T) {
+func TestServiceGetUsers(t *testing.T) {
 	t.Run("Expect found the user", func(t *testing.T) {
 		usersRepository.On("GetUsers", mock.AnythingOfType("uint")).Return(&usersData, &rolesData, nil).Once()
 
@@ -104,7 +104,7 @@ func TestService_GetUsers(t *testing.T) {
 	})
 }
 
-func TestService_AddUsers(t *testing.T) {
+func TestServiceAddUsers(t *testing.T) {
 	t.Run("Expect add user success", func(t *testing.T) {
 		usersRepository.On("AddUsers", mock.AnythingOfType("*request.InsertUsersRequest")).Return(nil).Once()
 
@@ -124,7 +124,7 @@ func TestService_AddUsers(t *testing.T) {
 	})
 }
 
-func TestService_UpdateUsers(t *testing.T) {
+func TestServiceUpdateUsers(t *testing.T) {
 	t.Run("Expect update user success", func(t *testing.T) {
 		usersRepository.On("GetUsers", mock.AnythingOfType("uint")).Return(&usersData, &rolesData, nil).Once()
 		usersRepository.On("UpdateUsers", mock.AnythingOfType("uint"), mock.AnythingOfType("*request.UpdateUsersRequest")).Return(nil).Once()
@@ -147,7 +147,7 @@ func TestService_UpdateUsers(t *testing.T) {
 	})
 }
 
-func TestService_DeleteUsers(t *testing.T) {
+func TestServiceDeleteUsers(t *testing.T) {
 	t.Run("Expect delete user success", func(t *testing.T) {
 		usersRepository.On("GetUsers", mock.AnythingOfType("uint")).Return(&usersData, &rolesData, nil).Once()
 		usersRepository.On("DeleteUsers", mock.AnythingOfType("uint")).Return(nil).Once()
@@ -169,7 +169,7 @@ func TestService_DeleteUsers(t *testing.T) {
 	})
 }
 
-func TestService_Login(t *testing.T) {
+func TestServiceLogin(t *testing.T) {
 	t.Run("Expect login success", func(t *testing.T) {
 		usersRepository.On("Login", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&usersData, nil).Once()
 
@@ -189,7 +189,7 @@ func TestService_Login(t *testing.T) {
 	})
 }
 
-func TestService_Register(t *testing.T) {
+func TestServiceRegister(t *testing.T) {
 	t.Run("Expect register success", func(t *testing.T) {
 		usersRepository.On("Register", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&usersCreds, nil).Once()
 
@@ -214,7 +214,7 @@ func TestService_Register(t *testing.T) {
 	})
 }
 
-func TestService_FindUserByEmail(t *testing.T) {
+func TestServiceFindUserByEmail(t *testing.T) {
 	t.Run("Expect find user by email success", func(t *testing.T) {
 		usersRepository.On("FindUserByEmail", mock.AnythingOfType("string")).Return(true).Once()
 

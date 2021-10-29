@@ -78,10 +78,12 @@ func (repo *GormRepository) GetAllUsers() ([]users.Users, error) {
 }
 
 func (repo *GormRepository) GetUsers(id uint) (*users.Users, *roles2.Roles, error) {
+	const QueryId = "id = ?"
+
 	var usersTable UserTable
 	var rolesTable roles.RolesTable
 
-	err := repo.DB.Where("id = ?", id).First(&usersTable).Error
+	err := repo.DB.Where(QueryId, id).First(&usersTable).Error
 
 	if err != nil {
 		return nil, nil, err
@@ -89,7 +91,7 @@ func (repo *GormRepository) GetUsers(id uint) (*users.Users, *roles2.Roles, erro
 
 	result := usersTable.ToUser()
 
-	err2 := repo.DB.Where("id = ?", result.RolesId).First(&rolesTable).Error
+	err2 := repo.DB.Where(QueryId, result.RolesId).First(&rolesTable).Error
 
 	if err2 != nil {
 		return nil, nil, err2

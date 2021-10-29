@@ -50,7 +50,7 @@ func setup() {
 	rolesService = roles.NewService(&rolesRepository)
 }
 
-func TestService_GetRoles(t *testing.T) {
+func TestServiceGetRoles(t *testing.T) {
 	t.Run("Expect found the roles", func(t *testing.T) {
 		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(&rolesData, nil).Once()
 
@@ -78,7 +78,7 @@ func TestService_GetRoles(t *testing.T) {
 	})
 }
 
-func TestService_GetAllRoles(t *testing.T) {
+func TestServiceGetAllRoles(t *testing.T) {
 	t.Run("Expect found all list roles", func(t *testing.T) {
 		rolesRepository.On("GetAllRoles", mock.Anything).Return(rolesArray, nil).Once()
 
@@ -90,9 +90,19 @@ func TestService_GetAllRoles(t *testing.T) {
 
 		assert.NotNil(t, roles)
 	})
+
+	t.Run("Expect failed found all list roles", func(t *testing.T) {
+		rolesRepository.On("GetAllRoles", mock.Anything).Return(nil, business.ErrNotFound).Once()
+
+		roles, err := rolesService.GetAllRoles()
+
+		assert.NotNil(t, err)
+
+		assert.Empty(t, roles)
+	})
 }
 
-func TestService_AddRoles(t *testing.T) {
+func TestServiceAddRoles(t *testing.T) {
 	t.Run("Expect add role success", func(t *testing.T) {
 		rolesRepository.On("AddRoles", mock.AnythingOfType("string"), mock.AnythingOfType("bool")).Return(nil).Once()
 
@@ -112,7 +122,7 @@ func TestService_AddRoles(t *testing.T) {
 	})
 }
 
-func TestService_UpdateRoles(t *testing.T) {
+func TestServiceUpdateRoles(t *testing.T) {
 	t.Run("Expect update role success", func(t *testing.T) {
 		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(&rolesData, nil).Once()
 		rolesRepository.On("UpdateRoles", mock.AnythingOfType("uint"), mock.AnythingOfType("roles.Roles")).Return(nil).Once()
@@ -123,19 +133,19 @@ func TestService_UpdateRoles(t *testing.T) {
 
 	})
 
-	t.Run("Expect update user failed", func(t *testing.T) {
-		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(&rolesData, nil).Once()
-		rolesRepository.On("UpdateRoles", mock.AnythingOfType("uint"), mock.AnythingOfType("roles.Roles")).Return(business.ErrInternalServerError).Once()
+	t.Run("Expect update roles failed", func(t *testing.T) {
+		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(nil, business.ErrNotFound).Once()
+		rolesRepository.On("UpdateRoles", mock.AnythingOfType("uint"), mock.AnythingOfType("roles.Roles")).Return(business.ErrNotFound).Once()
 
-		err := rolesService.UpdateRoles(id, name, is_active)
+		err2 := rolesService.UpdateRoles(id, name, is_active)
 
-		assert.NotNil(t, err)
+		assert.NotNil(t, err2)
 
-		assert.Equal(t, err, business.ErrInternalServerError)
+		assert.Equal(t, err2, business.ErrNotFound)
 	})
 }
 
-func TestService_DeleteRoles(t *testing.T) {
+func TestServiceDeleteRoles(t *testing.T) {
 	t.Run("Expect delete role success", func(t *testing.T) {
 		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(&rolesData, nil).Once()
 		rolesRepository.On("DeleteRoles", mock.AnythingOfType("uint")).Return(nil).Once()
@@ -145,7 +155,7 @@ func TestService_DeleteRoles(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("Expect delete user failed", func(t *testing.T) {
+	t.Run("Expect delete role failed", func(t *testing.T) {
 		rolesRepository.On("GetRoles", mock.AnythingOfType("uint")).Return(&rolesData, nil).Once()
 		rolesRepository.On("DeleteRoles", mock.AnythingOfType("uint")).Return(business.ErrInternalServerError).Once()
 
