@@ -5,6 +5,8 @@ import (
 	"acp-iam-api/api/iam/roles"
 	"acp-iam-api/api/iam/users"
 	"github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	"os"
 )
 
 func RegisterPath(e *echo.Echo, rolesController *roles.Controller, usersController *users.Controller, authController *auth.Controller) {
@@ -13,6 +15,7 @@ func RegisterPath(e *echo.Echo, rolesController *roles.Controller, usersControll
 	}
 
 	iamRolesRoutes := e.Group("api/iam/roles")
+	iamRolesRoutes.Use(echoMiddleware.JWT([]byte(os.Getenv("ACP_IAM_API_JWT_SECRET"))))
 	//route to get all roles
 	iamRolesRoutes.GET("", rolesController.GetAllRoles)
 	//route to get single role
@@ -25,6 +28,7 @@ func RegisterPath(e *echo.Echo, rolesController *roles.Controller, usersControll
 	iamRolesRoutes.DELETE("/:id", rolesController.DeleteRoles)
 
 	iamUsersRoutes := e.Group("api/iam/users")
+	iamUsersRoutes.Use(echoMiddleware.JWT([]byte(os.Getenv("ACP_IAM_API_JWT_SECRET"))))
 	//route to get all users
 	iamUsersRoutes.GET("", usersController.GetAllUsers)
 	//route to get single user
