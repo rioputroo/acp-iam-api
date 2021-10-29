@@ -56,6 +56,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           mkdir -p ~/.ssh/
+          echo "$SSH_KEY"
           echo "$SSH_KEY" > ~/.ssh/acp-final-project-aws-key.pem
           chmod 400 ~/.ssh/acp-final-project-aws-key.pem
           cat >>~/.ssh/config <<END
