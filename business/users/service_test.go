@@ -27,6 +27,8 @@ var (
 	usersRepository usersMock.Repository
 
 	usersData  users.Users
+	usersCreds users.UsersCreds
+
 	rolesData  roles.Roles
 	usersArray []users.Users
 
@@ -164,5 +166,68 @@ func TestService_DeleteUsers(t *testing.T) {
 		assert.NotNil(t, err)
 
 		assert.Equal(t, err, business.ErrInternalServerError)
+	})
+}
+
+func TestService_Login(t *testing.T) {
+	t.Run("Expect login success", func(t *testing.T) {
+		usersRepository.On("Login", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&usersData, nil).Once()
+
+		login, err := usersService.Login(email, password)
+
+		assert.Nil(t, err)
+
+		assert.NotNil(t, login)
+	})
+
+	t.Run("Expect login failed", func(t *testing.T) {
+		usersRepository.On("Login", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+
+		login, _ := usersService.Login(email, password)
+
+		assert.Nil(t, login)
+	})
+}
+
+func TestService_Register(t *testing.T) {
+	t.Run("Expect register success", func(t *testing.T) {
+		usersRepository.On("Register", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&usersCreds, nil).Once()
+
+		register, err := usersService.Register(email, password)
+
+		assert.Nil(t, err)
+
+		assert.NotNil(t, register)
+	})
+
+	t.Run("Expect register failed", func(t *testing.T) {
+		usersRepository.On("Register", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrInternalServerError).Once()
+
+		register, err := usersService.Register(email, password)
+
+		assert.Nil(t, register)
+
+		assert.NotNil(t, err)
+
+		assert.Equal(t, err, business.ErrInternalServerError)
+
+	})
+}
+
+func TestService_FindUserByEmail(t *testing.T) {
+	t.Run("Expect find user by email success", func(t *testing.T) {
+		usersRepository.On("FindUserByEmail", mock.AnythingOfType("string")).Return(true).Once()
+
+		find := usersService.FindUserByEmail(email)
+
+		assert.Equal(t, true, find)
+	})
+
+	t.Run("Expect not find user by email success", func(t *testing.T) {
+		usersRepository.On("FindUserByEmail", mock.AnythingOfType("string")).Return(false).Once()
+
+		find := usersService.FindUserByEmail(email)
+
+		assert.Equal(t, false, find)
 	})
 }
