@@ -22,7 +22,7 @@ type UserTable struct {
 	IsActive bool   `gorm:"is_active"`
 }
 
-func newUserTable(users2 users.Users) *UserTable {
+func newUserTable(users2 *request.UpdateUsersRequest) *UserTable {
 	return &UserTable{
 		RolesID:  users2.RolesId,
 		Email:    users2.Email,
@@ -116,10 +116,11 @@ func (repo *GormRepository) AddUsers(request *request.InsertUsersRequest) error 
 	return nil
 }
 
-func (repo *GormRepository) UpdateUsers(id uint, users users.Users) error {
-	usersData := newUserTable(users)
+func (repo *GormRepository) UpdateUsers(id uint, usersRequest *request.UpdateUsersRequest) error {
+	usersData := newUserTable(usersRequest)
 
 	err := repo.DB.Model(&usersData).Where("id = ? ", id).Updates(map[string]interface{}{"name": usersData.Name, "email": usersData.Email, "is_active": usersData.IsActive, "roles_id": usersData.RolesID}).Error
+
 	if err != nil {
 		return err
 	}

@@ -11,10 +11,6 @@ type Roles struct {
 	IsActive bool
 }
 
-func (oldData *Roles) Error() string {
-	panic("implement me")
-}
-
 type RolesUserResponse struct {
 	id        uint
 	name      string

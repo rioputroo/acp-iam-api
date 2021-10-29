@@ -52,17 +52,17 @@ func (s service) AddUsers(request *request.InsertUsersRequest) error {
 }
 
 func (s service) UpdateUsers(id uint, usersRequest *request.UpdateUsersRequest) error {
-	usersData, err, _ := s.repository.GetUsers(id)
+	usersData, _, err := s.repository.GetUsers(id)
 
 	if err != nil {
-		return err
+		return nil
 	} else if usersData == nil {
 		return business.ErrNotFound
 	}
 
 	updatedUsers := usersData.ModifyUsers(usersRequest)
 
-	return s.repository.UpdateUsers(id, updatedUsers)
+	return s.repository.UpdateUsers(id, &updatedUsers)
 }
 
 func (s service) DeleteUsers(id uint) error {

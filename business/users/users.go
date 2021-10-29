@@ -32,8 +32,8 @@ func NewUsers(request request.InsertUsersRequest) Users {
 }
 
 //ModifyUsers update existing users data
-func (oldData *Users) ModifyUsers(usersRequest *request.UpdateUsersRequest) Users {
-	return Users{
+func (oldData *Users) ModifyUsers(usersRequest *request.UpdateUsersRequest) request.UpdateUsersRequest {
+	return request.UpdateUsersRequest{
 		Name:     usersRequest.Name,
 		Email:    usersRequest.Email,
 		RolesId:  usersRequest.RolesId,
