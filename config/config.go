@@ -1,9 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
-	"log"
-	"os"
 	"sync"
 )
 
@@ -49,6 +49,8 @@ func GetConfig() *AppConfig {
 }
 
 func initConfig() *AppConfig {
+	godotenv.Load(".env")
+
 	var defaultConfig AppConfig
 
 	defaultConfig.AppPort = 8000
@@ -61,31 +63,51 @@ func initConfig() *AppConfig {
 	defaultConfig.DbName = "acpfinalproject"
 	defaultConfig.JwtSecretKey = "secret"
 
-	var (
-		err         error
-		currdir     string
-		finalConfig AppConfig
-	)
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("gohexagonal")
+	viper.BindEnv("app_port")
+	viper.BindEnv("app_environment")
+	viper.BindEnv("db_driver")
+	viper.BindEnv("db_address")
+	viper.BindEnv("db_port")
+	viper.BindEnv("db_username")
+	viper.BindEnv("db_password")
+	viper.BindEnv("db_name")
 
-	currdir, err = os.Getwd()
+	var finalConfig AppConfig
+	err := viper.Unmarshal(&finalConfig)
 	if err != nil {
-		log.Printf("Failed to get current directory, set to default")
-		return &defaultConfig
-	}
-
-	viper.SetConfigFile(currdir + "/config/.env")
-
-	err = viper.ReadInConfig()
-	if err != nil {
-		log.Printf("Failed read config, set to default")
-		return &defaultConfig
-	}
-
-	err = viper.Unmarshal(&finalConfig)
-	if err != nil {
-		log.Printf("failed to extract config, will use default value")
+		fmt.Print("failed to extract config, will use default value")
 		return &defaultConfig
 	}
 
 	return &finalConfig
+
+	//var (
+	//	err         error
+	//	currdir     string
+	//	finalConfig AppConfig
+	//)
+	//
+	//currdir, err = os.Getwd()
+	//if err != nil {
+	//	log.Printf("Failed to get current directory, set to default")
+	//	return &defaultConfig
+	//}
+	//
+	//viper.SetConfigFile(currdir + "/config/.env")
+	//
+	//err = viper.ReadInConfig()
+	//if err != nil {
+	//	log.Printf("Failed read config, set to default")
+	//	return &defaultConfig
+	//}
+	//
+	//err = viper.Unmarshal(&finalConfig)
+	//if err != nil {
+	//	log.Printf("failed to extract config, will use default value")
+	//	return &defaultConfig
+	//}
+	//
+	//return &finalConfig
 }
